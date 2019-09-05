@@ -67,7 +67,8 @@ class App extends Component {
               <Route
                 exact path="/signup"
                 render={() =>
-                  <Signup updateUser={this.updateUser} loggedIn={this.state.loggedIn} />} />
+                  <Signup updateUser={this.updateUser} loggedIn={true} />} />
+              {/* {this.state.loggedIn} />} /> */}
               <Route
                 exact path="/macrohome"
                 render={() =>
