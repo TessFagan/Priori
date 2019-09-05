@@ -39,9 +39,7 @@ mongoose.Promise = global.Promise
 //your local database url
 //27017 is the default mongoDB port
 // const uri = 'mongodb://localhost:27017/simple-PRIORITIZE'
-// const uri = 'mongodb://heroku_vwt7t66n:fcj39god2coilujrt2itvevrrp@ds217548.mlab.com:17548/heroku_vwt7t66n'
-
-const uri = 'mongodb://johnny:joh12345@ds217548.mlab.com:17548/heroku_5zjxdmwz'
+const uri = 'mongodb://johnny:joh12345@ds217548.mlab.com:17548/heroku_5zjxdmwz'
 
 mongoose.connect(uri,{ useNewUrlParser: true }).then(
   () => {
@@ -90,7 +88,7 @@ app.use(routes)
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('*', function (req, res) {
+app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 

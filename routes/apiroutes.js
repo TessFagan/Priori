@@ -58,7 +58,7 @@ router.get('/', (req, res, next) => {
     if (req.user) {
         res.json({ user: req.user })
     } else {
-        res.json({ user: null})
+        res.json({ user: null })
     }
 })
 
