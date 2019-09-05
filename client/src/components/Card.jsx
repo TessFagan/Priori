@@ -12,7 +12,7 @@ const style = {
     overflow: 'auto',
 }
 
-const Card = ({ id, text, index, moveCard }) => {
+const Card = ({ id, text, index, moveCard, remove }) => {
     const ref = useRef(null)
     const [, drop] = useDrop({
         accept: ItemTypes.CARD,
@@ -68,7 +68,12 @@ const Card = ({ id, text, index, moveCard }) => {
             <div ref={ref} style={{ ...style, opacity }}>
                 {text}
                 <div style={{ float: 'right' }}>
-                    <Button variant="danger" type="delete" id="deletebutton"><strong>X</strong></Button>
+                    <Button
+                        onClick={remove}
+                        variant="danger"
+                        type="delete"
+                        id="deletebutton"><strong>X</strong>
+                    </Button>
                 </div>
 
                 {/* <div style={{ float: 'right' }}>

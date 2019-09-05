@@ -8,18 +8,27 @@ const style = {
 
 const Container = (props) => {
     {
-        const [cards, setCards] = useState(props.items)
+        const cards = props.items;
+        
         const moveCard = useCallback(
             (dragIndex, hoverIndex) => {
-                const dragCard = cards[dragIndex]
-                setCards(
-                    update(cards, {
-                        $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
-                    }),
-                )
+                const dragCard = cards[dragIndex];
+                const newCards = update(cards, {
+                    $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
+                });
+
+                props.updateList(newCards);
             },
             [cards],
-        )
+        );
+
+        const remove = (index) => {
+            const newList = [...cards];
+            newList.splice(index, 1);
+
+            props.updateList(newList);
+        }
+
         const renderCard = (card, index) => {
             return (
                 <Card
@@ -28,13 +37,16 @@ const Container = (props) => {
                     id={card.id}
                     text={card.text}
                     moveCard={moveCard}
+                    remove={remove.bind(null, index)}
                 />
-
             )
         }
+
         return (
             <>
-                <div style={style}>{cards.map((card, i) => renderCard(card, i))}</div>
+                <div style={style}>
+                    {cards.map((card, i) => renderCard(card, i))}
+                </div>
             </>
         )
     }

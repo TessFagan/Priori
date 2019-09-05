@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import API from "../API";
 
 class Addtodo extends Component {
+    
     state = {
         newToDo: ""
     }
@@ -26,7 +27,6 @@ class Addtodo extends Component {
         var userData = this.state.newToDo
 
         API.createUser(userData)
-
     }
 
     handleChange = (e) => {
@@ -35,6 +35,10 @@ class Addtodo extends Component {
         this.setState({
             newToDo: val
         })
+    }
+
+    submitTodo = (event) => {
+        this.props.addTodo('addtodo', event);
     }
 
     render() {
@@ -52,7 +56,7 @@ class Addtodo extends Component {
                                 onChange={this.handleChange}
                             />
                         </Form.Group>
-                        <Button variant="primary" type="submit" id="submitbutton" onClick={this.handleClick} key={0}>
+                        <Button variant="primary" type="submit" id="submitbutton" onClick={this.submitTodo} key={0}>
                             Add
               </Button>
                     </Form>
@@ -64,65 +68,45 @@ class Addtodo extends Component {
 
 
 class Lifepriorities extends React.Component {
-
-    state = {
-        Lifepriorities: [
-            {
-                id: 1,
-                text: 'Write a cool JS library',
-            },
-            {
-                id: 2,
-                text: 'Make it generic enough',
-            },
-            {
-                id: 3,
-                text: 'Write README',
-            },
-            {
-                id: 4,
-                text: 'Create some examples',
-            },
-            {
-                id: 5,
-                text:
-                    'Spam in Twitter and IRC to promote it (note that this element is taller than the others)',
-            },
-            {
-                id: 6,
-                text: '???',
-            },
-            {
-                id: 7,
-                text: 'PROFIT',
-            },
-            {
-                id: 8,
-                text: 'Tess is da bomb',
-            },
-        ]
-    }
-
     render() {
-
         return (
-
             <Col md={6}>
                 <Jumbotron>
                     <h3>Life Priorities:</h3>
-                    <Example items={this.state.Lifepriorities} />
+                    {/* Uses props instead of state */}
+                    <Example
+                        items={this.props.priorities}
+                        updateList={this.props.updateList} />
                 </Jumbotron>
             </Col>
 
         )
     }
+}
+
+class Todolist extends React.Component {
+    render() {
+        return (
+
+            <Col md={6}>
+                <Jumbotron>
+                    <h3>To Do:</h3>
+                    <Example
+                        items={this.props.list}
+                        updateList={this.props.updateList} />
+                </Jumbotron>
+            </Col>
+        )
+    }
 
 }
 
+class Macrocontainer extends React.Component {
 
-class Todolist extends React.Component {
     state = {
-        Todolist: [
+        User: "",
+        Newpriority: "",
+        TodoList: [
             {
                 id: 1,
                 text: 'Buy Cat Food',
@@ -130,7 +114,7 @@ class Todolist extends React.Component {
             {
                 id: 2,
                 text: 'Take out garbage',
-            },
+            }/*,
             {
                 id: 3,
                 text: 'Do Laundry',
@@ -155,33 +139,43 @@ class Todolist extends React.Component {
             {
                 id: 8,
                 text: 'Call mom',
+            }*/
+        ],
+        Lifepriorities: [
+            {
+                id: 1,
+                text: 'Write a cool JS library',
             },
+            {
+                id: 2,
+                text: 'Make it generic enough',
+            }/*,
+            {
+                id: 3,
+                text: 'Write README',
+            },
+            {
+                id: 4,
+                text: 'Create some examples',
+            },
+            {
+                id: 5,
+                text:
+                    'Spam in Twitter and IRC to promote it (note that this element is taller than the others)',
+            },
+            {
+                id: 6,
+                text: '???',
+            },
+            {
+                id: 7,
+                text: 'PROFIT',
+            },
+            {
+                id: 8,
+                text: 'Tess is da bomb',
+            },*/
         ]
-
-    }
-
-    render() {
-        return (
-
-            <Col md={6}>
-                <Jumbotron>
-                    <h3>To Do:</h3>
-                    <Example items={this.state.Todolist} />
-                </Jumbotron>
-            </Col>
-        )
-    }
-
-}
-
-class Macrocontainer extends React.Component {
-
-    state = {
-        User: "",
-        Newpriority: "",
-        Addtodo: [],
-        Currentlifepriorities: [],
-        Currenttodolist: []
     }
 
     loadUser = () => {
@@ -190,22 +184,39 @@ class Macrocontainer extends React.Component {
             .catch(err => console.log(err));
     };
 
-    handleClick = (e) => {
-        e.preventDefault();
-        console.log("add clicked =>" + document.getElementById("addpriority").value);
+    handleClick = (state, elId, event) => {
+        event && event.preventDefault();
+        /*
+        console.log("add clicked => " + document.getElementById("addpriority").value);
         console.log(document.getElementById("addpriority").value)
+        */
 
-        this.setState({
-            Newpriority: document.getElementById("addpriority").value
-        });
-        console.log(this.state.Newpriority);
+        const newState = [...this.state[state]];
 
+        const lastElement = newState[newState.length - 1] || { id: 0 };
+
+        // Creates new priority object
+        const newElement = {
+            id: lastElement.id + 1,
+            text: document.getElementById(elId).value
+        };
+
+        newState.push(newElement);
+
+        this.updateList(state, newState);
     }
-
+    
+    updateList(state, value) {
+        this.setState({
+            [state]: value
+        });
+    }
 
     // https://reactjs.org/docs/lifting-state-up.html READ THIS TESS!!
 
     render() {
+        console.log('rendering..', this.state.Lifepriorities);
+
         return (
             <div>
                 <Navbar>
@@ -230,17 +241,25 @@ class Macrocontainer extends React.Component {
                                             id="addpriority"
                                         />
                                     </Form.Group>
-                                    <Button variant="primary" type="add" id="addpriority" onClick={this.handleClick} key={0}>
+                                    <Button
+                                        variant="primary" type="add" id="addpriority"
+                                        onClick={this.handleClick.bind(this, 'Lifepriorities', 'addpriority')}
+                                        key={0}>
                                         Add
-                  </Button>
+                                    </Button>
                                 </Form>
                             </Jumbotron>
                         </Col>
-                        <Addtodo />
+                        <Addtodo addTodo={this.handleClick.bind(this, 'TodoList')} />
                     </Row>
                     <Row>
-                        <Lifepriorities />
-                        <Todolist />
+                        <Lifepriorities
+                            priorities={this.state.Lifepriorities}
+                            updateList={this.updateList.bind(this, 'Lifepriorities')} />
+                        <Todolist
+                            list={this.state.TodoList}
+                            updateList={this.updateList.bind(this, 'TodoList')}
+                        />
                     </Row>
                 </Container>
             </div>
