@@ -39,9 +39,11 @@ mongoose.Promise = global.Promise
 //your local database url
 //27017 is the default mongoDB port
 // const uri = 'mongodb://localhost:27017/simple-PRIORITIZE'
-const uri = 'mongodb://heroku_vwt7t66n:fcj39god2coilujrt2itvevrrp@ds217548.mlab.com:17548/heroku_vwt7t66n'
+// const uri = 'mongodb://heroku_vwt7t66n:fcj39god2coilujrt2itvevrrp@ds217548.mlab.com:17548/heroku_vwt7t66n'
 
-mongoose.connect(uri).then(
+const uri = 'mongodb://johnny:joh12345@ds217548.mlab.com:17548/heroku_5zjxdmwz'
+
+mongoose.connect(uri,{ useNewUrlParser: true }).then(
   () => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
     console.log('Connected to Mongo');
