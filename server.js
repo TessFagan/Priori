@@ -1,14 +1,14 @@
 const express = require("express");
-const session = require('express-session')
+const session = require("express-session");
 const path = require("path");
-const bodyParser = require('body-parser')
-const morgan = require('morgan')
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
 const PORT = process.env.PORT || 3001;
 const app = express();
 const mongoose = require("mongoose");
-const MongoStore = require('connect-mongo')(session)
-const passport = require('./passport');
-const routes = require("./routes/apiroutes")
+const MongoStore = require("connect-mongo")(session);
+const passport = require("./passport");
+const routes = require("./routes/apiroutes");
 
 // Define middleware here
 app.use(express.urlencoded({ extended: true }));
@@ -18,63 +18,56 @@ app.use(express.json());
 //   app.use(express.static("client/build"));
 // }
 
-
 // app.use(express.static('build'));
 // app.get('*', (req, res) => res.sendFile(path.resolve('build', 'index.html')));
 
-
 // MIDDLEWARE MORGAN
-app.use(morgan('dev'))
+app.use(morgan("dev"));
 app.use(
   bodyParser.urlencoded({
     extended: false
   })
-)
-app.use(bodyParser.json())
+);
+app.use(bodyParser.json());
 
 // Connect to the Mongo DB
 
-mongoose.Promise = global.Promise
+mongoose.Promise = global.Promise;
 
 //your local database url
 //27017 is the default mongoDB port
 // const uri = 'mongodb://localhost:27017/simple-PRIORITIZE'
-const uri = 'mongodb://johnny:joh12345@ds217548.mlab.com:17548/heroku_5zjxdmwz'
+const uri = "mongodb://johnny:joh12345@ds217548.mlab.com:17548/heroku_5zjxdmwz";
 
-mongoose.connect(uri,{ useNewUrlParser: true }).then(
+mongoose.connect(uri, { useNewUrlParser: true }).then(
   () => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
-    console.log('Connected to Mongo');
-
+    console.log("Connected to Mongo");
   },
   err => {
     /** handle initial connection error */
-    console.log('error connecting to Mongo: ')
+    console.log("error connecting to Mongo: ");
     console.log(err);
-
   }
 );
 var db = mongoose.connection;
 
-
-
 // / Sessions
 app.use(
   session({
-    secret: 'tessisamazing', //pick a random string to make the hash that is generated secure
+    secret: "tessisamazing", //pick a random string to make the hash that is generated secure
     store: new MongoStore({ mongooseConnection: db }),
     resave: false, //required
     saveUninitialized: false //required
   })
-)
+);
 
 // Passport
-app.use(passport.initialize())
-app.use(passport.session()) // calls the deserializeUser
-
+app.use(passport.initialize());
+app.use(passport.session()); // calls the deserializeUser
 
 // Define API routes here
-app.use(routes)
+app.use("/api", routes);
 
 // Send every other request to the React app
 
@@ -86,12 +79,11 @@ app.use(routes)
 
 // app.get('*', (req, res) => res.sendFile(path.resolve('build', 'index.html')));
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, "client", "build")));
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+app.get("*", function(req, res) {
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
-
 
 // Start the API server
 app.listen(PORT, () => {
